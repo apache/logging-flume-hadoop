@@ -1,0 +1,13 @@
+----------------------------------------------------------------
+Sat Apr 01 19:43:39 MST 2023:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.14.2.0 - (1828579): instance a816c00e-0187-3fd9-52db-00002bdaa9a0 
+on database directory /Users/rgoers/Shared/projects/apache/flume/flume/flume-ng-sinks/flume-hive-sink/metastore_db with class loader sun.misc.Launcher$AppClassLoader@3d4eac69 
+Loaded from file:/Users/rgoers/.m2/repository/org/apache/derby/derby/10.14.2.0/derby-10.14.2.0.jar
+java.vendor=Amazon.com Inc.
+java.runtime.version=1.8.0_362-b08
+user.dir=/Users/rgoers/Shared/projects/apache/flume/flume/flume-ng-sinks/flume-hive-sink
+os.name=Mac OS X
+os.arch=aarch64
+os.version=13.3
+derby.system.home=null
+Database Class Loader started - derby.database.classpath=''

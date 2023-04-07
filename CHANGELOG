@@ -1,0 +1,10 @@
+Release Notes - Flume Hadoop - Version 2.0.0
+
+** Bug
+    *
+
+** Improvement
+    * [FLUME-3467] - Move the Hadoop components to their own repo.
+
+
+
