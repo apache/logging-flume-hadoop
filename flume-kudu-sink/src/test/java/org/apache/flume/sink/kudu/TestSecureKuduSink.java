@@ -24,7 +24,12 @@ import static org.apache.kudu.test.ClientTestUtil.scanTableToStrings;
 import static org.apache.kudu.util.SecurityUtil.KUDU_TICKETCACHE_PROPERTY;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assume.assumeNoException;
+import static org.junit.Assume.assumeTrue;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -36,9 +41,7 @@ import org.apache.flume.Event;
 import org.apache.flume.EventDeliveryException;
 import org.apache.flume.event.EventBuilder;
 import org.apache.kudu.test.KuduTestHarness;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,10 +52,36 @@ import org.apache.kudu.client.CreateTableOptions;
 import org.apache.kudu.client.KuduTable;
 import org.apache.kudu.test.cluster.MiniKuduCluster.MiniKuduClusterBuilder;
 
+/**
+ * This needs to be refactored into an integration test as it requires Kubernetes to be installed and
+ * properly configured.
+ */
+@Ignore
 public class TestSecureKuduSink {
   private static final Logger LOG = LoggerFactory.getLogger(TestSecureKuduSink.class);
   private static final int TICKET_LIFETIME_SECONDS = 20;
   private static final int RENEWABLE_LIFETIME_SECONDS = 35;
+
+  @BeforeClass
+  public static void beforeClass() throws Exception {
+      ProcessBuilder pb = new ProcessBuilder("kdb5_util", "list_mkeys");
+      boolean ok = true;
+      StringBuilder sb = new StringBuilder();
+      int result = -1;
+      try {
+        Process process = pb.start();
+        result = process.waitFor();
+
+        BufferedReader reader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+        String line;
+        while ((line = reader.readLine()) != null) {
+          sb.append(line);
+        }
+        assumeTrue(sb.toString(), result >= 0);
+      } catch (IOException ex) {
+         assumeNoException(ex);
+      }
+  }
 
   private static final MiniKuduClusterBuilder clusterBuilder =
       KuduTestHarness.getBaseClusterBuilder()

@@ -54,5 +54,5 @@ Bug and Issue tracker.
 
 Compiling Flume Hadoop requires the following tools:
 
-* Oracle Java JDK 8
+* Oracle Java JDK 8 (Note: 3.x does not support compiling with anything but Java 8)
 * Apache Maven 3.x

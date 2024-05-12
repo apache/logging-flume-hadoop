@@ -103,6 +103,16 @@
     <dependency>
       <groupId>org.apache.hadoop</groupId>
       <artifactId>hadoop-common</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>ch.qos.reload4j</groupId>
+          <artifactId>reload4j</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-reload4j</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
@@ -159,7 +169,7 @@
       <id>kudu-linux</id>
       <activation>
         <os>
-          <family>Unix</family>
+          <name>linux</name>
           <arch>amd64</arch>
         </os>
       </activation>
@@ -178,7 +188,6 @@
       <activation>
         <os>
           <family>mac</family>
-          <arch>amd64</arch>
         </os>
       </activation>
       <dependencies>
@@ -186,7 +195,7 @@
           <groupId>org.apache.kudu</groupId>
           <artifactId>kudu-binary</artifactId>
           <version>${kudu.version}</version>
-          <classifier>${os.detected.classifier}</classifier>
+          <classifier>osx-x86_64</classifier>
           <scope>test</scope>
         </dependency>
       </dependencies>

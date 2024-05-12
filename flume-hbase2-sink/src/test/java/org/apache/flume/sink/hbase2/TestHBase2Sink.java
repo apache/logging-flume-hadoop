@@ -23,6 +23,7 @@ import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.primitives.Longs;
+import org.apache.commons.lang.reflect.FieldUtils;
 import org.apache.flume.Channel;
 import org.apache.flume.ChannelException;
 import org.apache.flume.Context;
@@ -57,7 +58,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.mockito.internal.util.reflection.Whitebox;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -474,7 +474,7 @@ public class TestHBase2Sink {
       Assert.fail("take() method should throw exception");
     } catch (ChannelException ex) {
       Assert.assertEquals("Mock Exception", ex.getMessage());
-      SinkCounter sinkCounter = (SinkCounter) Whitebox.getInternalState(sink, "sinkCounter");
+      SinkCounter sinkCounter = (SinkCounter) FieldUtils.readDeclaredField(sink, "sinkCounter", true);
       Assert.assertEquals(1, sinkCounter.getChannelReadFail());
     }
     doReturn(e).when(channel).take();
@@ -518,7 +518,7 @@ public class TestHBase2Sink {
       Assert.fail("FlumeException expected from serializer");
     } catch (FlumeException ex) {
       Assert.assertEquals("Exception for testing", ex.getMessage());
-      SinkCounter sinkCounter = (SinkCounter) Whitebox.getInternalState(sink, "sinkCounter");
+      SinkCounter sinkCounter = (SinkCounter) FieldUtils.readDeclaredField(sink, "sinkCounter", true);
       Assert.assertEquals(1, sinkCounter.getEventWriteFail());
     }
     MockSimpleHBase2EventSerializer.throwException = false;

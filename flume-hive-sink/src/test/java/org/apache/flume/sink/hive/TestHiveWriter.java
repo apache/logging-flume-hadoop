@@ -90,7 +90,11 @@ public class TestHiveWriter {
     }
 
     // 2) Setup Hive client
-    SessionState.start(new CliSessionState(conf));
+    try {
+      SessionState.start(new CliSessionState(conf));
+    } catch (Exception ex) {
+      ex.printStackTrace();
+    }
     driver = new Driver(conf);
 
   }

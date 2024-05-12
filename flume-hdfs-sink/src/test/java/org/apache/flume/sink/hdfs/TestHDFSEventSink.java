@@ -44,6 +44,7 @@ import org.apache.avro.generic.GenericDatumReader;
 import org.apache.avro.generic.GenericRecord;
 import org.apache.avro.io.DatumReader;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.reflect.FieldUtils;
 import org.apache.flume.Channel;
 import org.apache.flume.ChannelException;
 import org.apache.flume.Clock;
@@ -78,7 +79,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.mockito.internal.util.reflection.Whitebox;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.slf4j.Logger;
@@ -684,7 +684,7 @@ public class TestHDFSEventSink {
 
   // inject fault and make sure that the txn is rolled back and retried
   @Test
-  public void testBadSimpleAppend() throws InterruptedException,
+  public void testBadSimpleAppend() throws IllegalAccessException, InterruptedException,
       LifecycleException, EventDeliveryException, IOException {
 
     LOG.debug("Starting...");
@@ -758,7 +758,7 @@ public class TestHDFSEventSink {
     sink.stop();
     verifyOutputSequenceFiles(fs, conf, dirPath.toUri().getPath(), fileName, bodies);
 
-    SinkCounter sc = (SinkCounter) Whitebox.getInternalState(sink, "sinkCounter");
+    SinkCounter sc = (SinkCounter) FieldUtils.readDeclaredField(sink, "sinkCounter", true);
     Assert.assertEquals(1, sc.getEventWriteFail());
   }
 
@@ -870,7 +870,7 @@ public class TestHDFSEventSink {
    */
   @Test
   public void testCloseReopen()
-      throws InterruptedException, LifecycleException, EventDeliveryException, IOException {
+      throws IllegalAccessException, InterruptedException, LifecycleException, EventDeliveryException, IOException {
 
     LOG.debug("Starting...");
     final int numBatches = 4;
@@ -937,7 +937,7 @@ public class TestHDFSEventSink {
 
     verifyOutputSequenceFiles(fs, conf, dirPath.toUri().getPath(), fileName, bodies);
 
-    SinkCounter sc = (SinkCounter) Whitebox.getInternalState(sink, "sinkCounter");
+    SinkCounter sc = (SinkCounter) FieldUtils.readDeclaredField(sink, "sinkCounter", true);
     Assert.assertEquals(1, sc.getEventWriteFail());
   }
 
@@ -1114,7 +1114,7 @@ public class TestHDFSEventSink {
    * verify that the process returns backoff due to timeout
    */
   @Test
-  public void testSlowAppendFailure() throws InterruptedException,
+  public void testSlowAppendFailure() throws IllegalAccessException, InterruptedException,
       LifecycleException, EventDeliveryException, IOException {
 
     LOG.debug("Starting...");
@@ -1180,7 +1180,7 @@ public class TestHDFSEventSink {
 
     sink.stop();
 
-    SinkCounter sc = (SinkCounter) Whitebox.getInternalState(sink, "sinkCounter");
+    SinkCounter sc = (SinkCounter) FieldUtils.readDeclaredField(sink, "sinkCounter", true);
     Assert.assertEquals(2, sc.getEventWriteFail());
   }
 
@@ -1639,7 +1639,7 @@ public class TestHDFSEventSink {
   }
 
   @Test
-  public void testChannelException() {
+  public void testChannelException() throws Exception {
     LOG.debug("Starting...");
     Context context = new Context();
     context.put("hdfs.path", testPath);
@@ -1658,12 +1658,12 @@ public class TestHDFSEventSink {
     }
     sink.stop();
 
-    SinkCounter sc = (SinkCounter) Whitebox.getInternalState(sink, "sinkCounter");
+    SinkCounter sc = (SinkCounter) FieldUtils.readDeclaredField(sink, "sinkCounter", true);
     Assert.assertEquals(1, sc.getChannelReadFail());
   }
 
   @Test
-  public void testEmptyInUseSuffix() {
+  public void testEmptyInUseSuffix() throws Exception {
     String inUseSuffixConf = "aaaa";
     Context context = new Context();
     context.put("hdfs.path", testPath);
@@ -1671,17 +1671,17 @@ public class TestHDFSEventSink {
 
     //hdfs.emptyInUseSuffix not defined
     Configurables.configure(sink, context);
-    String inUseSuffix = (String) Whitebox.getInternalState(sink, "inUseSuffix");
+    String inUseSuffix = (String) FieldUtils.readDeclaredField(sink, "inUseSuffix", true);
     Assert.assertEquals(inUseSuffixConf, inUseSuffix);
 
     context.put("hdfs.emptyInUseSuffix", "true");
     Configurables.configure(sink, context);
-    inUseSuffix = (String) Whitebox.getInternalState(sink, "inUseSuffix");
+    inUseSuffix = (String) FieldUtils.readDeclaredField(sink, "inUseSuffix", true);
     Assert.assertEquals("", inUseSuffix);
 
     context.put("hdfs.emptyInUseSuffix", "false");
     Configurables.configure(sink, context);
-    inUseSuffix = (String) Whitebox.getInternalState(sink, "inUseSuffix");
+    inUseSuffix = (String) FieldUtils.readDeclaredField(sink, "inUseSuffix", true);
     Assert.assertEquals(inUseSuffixConf, inUseSuffix);
   }
 }

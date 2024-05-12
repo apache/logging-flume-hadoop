@@ -1,0 +1,17 @@
+# Lines that start with '#' are comments.
+*~
+*.diff
+*#
+.classpath
+.project
+.settings
+.eclipse
+*/bin
+target
+patchprocess
+**/derby.log
+.idea
+*.iml
+.DS_Store
+/.mvn/wrapper/maven-wrapper.jar
+**/metastore_db

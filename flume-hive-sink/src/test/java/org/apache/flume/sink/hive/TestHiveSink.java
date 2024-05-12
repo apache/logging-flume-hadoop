@@ -22,6 +22,7 @@ package org.apache.flume.sink.hive;
 
 import com.google.common.collect.Lists;
 import junit.framework.Assert;
+import org.apache.commons.lang.reflect.FieldUtils;
 import org.apache.flume.Channel;
 import org.apache.flume.ChannelException;
 import org.apache.flume.Context;
@@ -46,7 +47,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.mockito.Mockito;
-import org.mockito.internal.util.reflection.Whitebox;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -380,7 +380,7 @@ public class TestHiveSink {
       //Expected exception
     }
 
-    SinkCounter sinkCounter = (SinkCounter) Whitebox.getInternalState(sink, "sinkCounter");
+    SinkCounter sinkCounter = (SinkCounter) FieldUtils.readDeclaredField(sink, "sinkCounter", true);
     Assert.assertEquals(1, sinkCounter.getChannelReadFail());
   }
 
