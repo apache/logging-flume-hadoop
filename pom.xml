@@ -64,7 +64,7 @@ limitations under the License.
     <spotless-maven-plugin.version>2.27.2</spotless-maven-plugin.version>
     <system-rules.version>1.17.0</system-rules.version>
     <tomcat-embed.version>8.5.100</tomcat-embed.version>
-    <zookeeper.version>3.6.2</zookeeper.version>
+    <zookeeper.version>3.9.2</zookeeper.version>
   </properties>
   <dependencyManagement>
     <dependencies>
