@@ -42,6 +42,7 @@ import org.apache.hadoop.hive.ql.Driver;
 import org.apache.hadoop.hive.ql.metadata.HiveException;
 import org.apache.hadoop.hive.ql.session.SessionState;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -111,6 +112,11 @@ public class TestHiveSink {
     SessionState.start(new CliSessionState(conf));
     driver = new Driver(conf);
 
+  }
+
+  @AfterClass
+  public static void afterAll() {
+    System.clearProperty("derby.system.home");
   }
 
 

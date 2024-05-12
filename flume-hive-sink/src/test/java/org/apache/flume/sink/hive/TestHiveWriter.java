@@ -35,6 +35,7 @@ import org.apache.hadoop.hive.metastore.txn.TxnDbUtil;
 import org.apache.hadoop.hive.ql.Driver;
 import org.apache.hadoop.hive.ql.session.SessionState;
 import org.apache.hive.hcatalog.streaming.HiveEndPoint;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -70,6 +71,11 @@ public class TestHiveWriter {
   public TemporaryFolder dbFolder = new TemporaryFolder();
 
   private final Driver driver;
+
+  @AfterClass
+  public static void afterAll() {
+    System.clearProperty("derby.system.home");
+  }
 
   public TestHiveWriter() throws Exception {
     partVals = new ArrayList<String>(2);

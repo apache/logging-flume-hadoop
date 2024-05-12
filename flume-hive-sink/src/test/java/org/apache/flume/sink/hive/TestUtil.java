@@ -53,6 +53,7 @@ public class TestUtil {
    * @param conf HiveConf to add these values to.
    */
   public static void setConfValues(HiveConf conf) {
+    System.setProperty("derby.system.home", "target/derby");
     conf.setVar(HiveConf.ConfVars.HIVE_TXN_MANAGER, txnMgr);
     conf.setBoolVar(HiveConf.ConfVars.HIVE_SUPPORT_CONCURRENCY, true);
     conf.set("fs.raw.impl", RawFileSystem.class.getName());
