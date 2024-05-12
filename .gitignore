@@ -14,4 +14,3 @@ patchprocess
 *.iml
 .DS_Store
 /.mvn/wrapper/maven-wrapper.jar
-**/metastore_db

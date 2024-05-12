@@ -188,6 +188,7 @@
       <activation>
         <os>
           <family>mac</family>
+          <arch>x86</arch>
         </os>
       </activation>
       <dependencies>
@@ -195,7 +196,7 @@
           <groupId>org.apache.kudu</groupId>
           <artifactId>kudu-binary</artifactId>
           <version>${kudu.version}</version>
-          <classifier>osx-x86_64</classifier>
+          <classifier>${os.detected.classifier}</classifier>
           <scope>test</scope>
         </dependency>
       </dependencies>

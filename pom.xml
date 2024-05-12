@@ -655,6 +655,7 @@ limitations under the License.
       <activation>
         <os>
           <family>mac</family>
+          <arch>x86</arch>
         </os>
       </activation>
       <modules>
