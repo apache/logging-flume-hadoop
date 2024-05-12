@@ -655,7 +655,7 @@ limitations under the License.
       <activation>
         <os>
           <family>mac</family>
-          <arch>x86</arch>
+          <arch>x86_64</arch>
         </os>
       </activation>
       <modules>
@@ -666,7 +666,7 @@ limitations under the License.
       </modules>
     </profile>
     <profile>
-      <id>release</id>
+      <id>apache-release</id>
       <modules>
         <module>flume-hadoop-dist</module>
       </modules>
