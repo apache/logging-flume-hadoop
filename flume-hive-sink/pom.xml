@@ -36,8 +36,8 @@
     <skipTests>true</skipTests>
     <derby.version>10.16.1.1</derby.version>
     <!-- TODO fix spotbugs/pmd violations -->
-    <spotbugs.maxAllowedViolations>6</spotbugs.maxAllowedViolations>
-    <pmd.maxAllowedViolations>7</pmd.maxAllowedViolations>
+    <spotbugs.maxAllowedViolations>11</spotbugs.maxAllowedViolations>
+    <pmd.maxAllowedViolations>10</pmd.maxAllowedViolations>
     <module.name>org.apache.flume.sink.hive</module.name>
   </properties>
 

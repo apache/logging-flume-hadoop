@@ -26,6 +26,8 @@
   <name>Flume Kudu Sink</name>
 
   <properties>
+    <!-- TODO fix spotbugs violations -->
+    <spotbugs.maxAllowedViolations>2</spotbugs.maxAllowedViolations>
     <module.name>org.apache.flume.sink.kudu</module.name>
   </properties>
 

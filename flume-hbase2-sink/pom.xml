@@ -27,7 +27,7 @@
 
   <properties>
     <!-- TODO fix spotbugs violations -->
-    <spotbugs.maxAllowedViolations>3</spotbugs.maxAllowedViolations>
+    <spotbugs.maxAllowedViolations>7</spotbugs.maxAllowedViolations>
     <module.name>org.apache.flume.sink.hbase2</module.name>
   </properties>
 

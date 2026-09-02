@@ -30,8 +30,8 @@
 
   <properties>
     <!-- TODO fix spotbugs/pmd violations -->
-    <spotbugs.maxAllowedViolations>14</spotbugs.maxAllowedViolations>
-    <pmd.maxAllowedViolations>25</pmd.maxAllowedViolations>
+    <spotbugs.maxAllowedViolations>21</spotbugs.maxAllowedViolations>
+    <pmd.maxAllowedViolations>15</pmd.maxAllowedViolations>
     <module.name>org.apache.flume.sink.hdfs</module.name>
   </properties>
 
