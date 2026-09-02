@@ -16,7 +16,14 @@
  */
 package org.apache.flume.sink.kudu;
 
-import static org.apache.flume.sink.kudu.RegexpKuduOperationsProducer.*;
+import static org.apache.flume.sink.kudu.RegexpKuduOperationsProducer.BAD_COLUMN_VALUE_POLICY_PROP;
+import static org.apache.flume.sink.kudu.RegexpKuduOperationsProducer.MISSING_COLUMN_POLICY_PROP;
+import static org.apache.flume.sink.kudu.RegexpKuduOperationsProducer.OPERATION_PROP;
+import static org.apache.flume.sink.kudu.RegexpKuduOperationsProducer.PATTERN_PROP;
+import static org.apache.flume.sink.kudu.RegexpKuduOperationsProducer.SKIP_BAD_COLUMN_VALUE_PROP;
+import static org.apache.flume.sink.kudu.RegexpKuduOperationsProducer.SKIP_MISSING_COLUMN_PROP;
+import static org.apache.flume.sink.kudu.RegexpKuduOperationsProducer.UNMATCHED_ROW_POLICY_PROP;
+import static org.apache.flume.sink.kudu.RegexpKuduOperationsProducer.WARN_UNMATCHED_ROWS_PROP;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 

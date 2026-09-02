@@ -43,7 +43,11 @@ import org.apache.kudu.client.CreateTableOptions;
 import org.apache.kudu.client.KuduTable;
 import org.apache.kudu.test.KuduTestHarness;
 import org.apache.kudu.test.cluster.MiniKuduCluster.MiniKuduClusterBuilder;
-import org.junit.*;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Ignore;
+import org.junit.Rule;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
