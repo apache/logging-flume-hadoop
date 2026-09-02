@@ -46,7 +46,6 @@ import org.apache.avro.io.DatumReader;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.reflect.FieldUtils;
 import org.apache.flume.Channel;
-import org.apache.flume.ChannelException;
 import org.apache.flume.Clock;
 import org.apache.flume.Context;
 import org.apache.flume.Event;
@@ -59,6 +58,7 @@ import org.apache.flume.channel.MemoryChannel;
 import org.apache.flume.conf.Configurables;
 import org.apache.flume.event.EventBuilder;
 import org.apache.flume.event.SimpleEvent;
+import org.apache.flume.exception.ChannelException;
 import org.apache.flume.instrumentation.SinkCounter;
 import org.apache.flume.lifecycle.LifecycleException;
 import org.apache.hadoop.conf.Configuration;
@@ -391,7 +391,7 @@ public class TestHDFSEventSink {
         context.put("hdfs.batchSize", String.valueOf(batchSize));
         context.put("hdfs.writeFormat", "Text");
         context.put("hdfs.fileType", "DataStream");
-        context.put("serializer", "AVRO_EVENT");
+        context.put("serializer", "org.apache.flume.rpc.avro.serialization.FlumeEventAvroEventSerializer$Builder");
 
         Configurables.configure(sink, context);
 

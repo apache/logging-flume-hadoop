@@ -16,13 +16,6 @@
  */
 package org.apache.flume.sink.hdfs;
 
-import static org.apache.flume.serialization.AvroEventSerializerConfigurationConstants.COMPRESSION_CODEC;
-import static org.apache.flume.serialization.AvroEventSerializerConfigurationConstants.DEFAULT_COMPRESSION_CODEC;
-import static org.apache.flume.serialization.AvroEventSerializerConfigurationConstants.DEFAULT_STATIC_SCHEMA_URL;
-import static org.apache.flume.serialization.AvroEventSerializerConfigurationConstants.DEFAULT_SYNC_INTERVAL_BYTES;
-import static org.apache.flume.serialization.AvroEventSerializerConfigurationConstants.STATIC_SCHEMA_URL;
-import static org.apache.flume.serialization.AvroEventSerializerConfigurationConstants.SYNC_INTERVAL_BYTES;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -70,6 +63,14 @@ public class AvroEventSerializer implements EventSerializer, Configurable {
 
     public static final String AVRO_SCHEMA_LITERAL_HEADER = "flume.avro.schema.literal";
     public static final String AVRO_SCHEMA_URL_HEADER = "flume.avro.schema.url";
+
+    // Configuration keys shared with the Avro serializers of `flume-rpc-avro`
+    public static final String SYNC_INTERVAL_BYTES = "syncIntervalBytes";
+    public static final int DEFAULT_SYNC_INTERVAL_BYTES = 2048000; // 2MB
+    public static final String COMPRESSION_CODEC = "compressionCodec";
+    public static final String DEFAULT_COMPRESSION_CODEC = "null"; // no codec
+    public static final String STATIC_SCHEMA_URL = "schemaURL";
+    public static final String DEFAULT_STATIC_SCHEMA_URL = null;
 
     private final OutputStream out;
     private DatumWriter<Object> writer = null;

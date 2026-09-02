@@ -16,7 +16,13 @@
  */
 package org.apache.flume.sink.hbase2;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.doCallRealMethod;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Throwables;
@@ -30,7 +36,6 @@ import java.util.Map;
 import java.util.NavigableMap;
 import org.apache.commons.lang.reflect.FieldUtils;
 import org.apache.flume.Channel;
-import org.apache.flume.ChannelException;
 import org.apache.flume.Context;
 import org.apache.flume.Event;
 import org.apache.flume.EventDeliveryException;
@@ -41,6 +46,7 @@ import org.apache.flume.channel.MemoryChannel;
 import org.apache.flume.conf.Configurables;
 import org.apache.flume.conf.ConfigurationException;
 import org.apache.flume.event.EventBuilder;
+import org.apache.flume.exception.ChannelException;
 import org.apache.flume.instrumentation.SinkCounter;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.HBaseConfiguration;
@@ -86,6 +92,8 @@ public class TestHBase2Sink {
 
         Configuration conf = HBaseConfiguration.create();
         conf.setBoolean("hbase.localcluster.assign.random.ports", true);
+        // The asynchronous WAL of HBase 2.5 relies on HDFS client internals that changed in Hadoop 3.5
+        conf.set("hbase.wal.provider", "filesystem");
         testUtility = new HBaseTestingUtility(conf);
         testUtility.startMiniCluster();
     }
@@ -421,7 +429,7 @@ public class TestHBase2Sink {
                             "More results than expected in the table." + "Expected = " + numEvents + ". Found = " + i);
                 }
                 results[i++] = out;
-                System.out.println(out);
+                System.out.println(Bytes.toString(out));
             }
         } finally {
             rs.close();
@@ -436,7 +444,7 @@ public class TestHBase2Sink {
             for (Result r = rs.next(); r != null; r = rs.next()) {
                 out = r.getValue(columnFamily.getBytes(), inColumn.getBytes());
                 results[i++] = out;
-                System.out.println(out);
+                System.out.println(Bytes.toString(out));
             }
         } finally {
             rs.close();

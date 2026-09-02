@@ -37,7 +37,6 @@ import org.apache.avro.reflect.ReflectDatumWriter;
 import org.apache.flume.Context;
 import org.apache.flume.Event;
 import org.apache.flume.event.EventBuilder;
-import org.apache.flume.serialization.AvroEventSerializerConfigurationConstants;
 import org.apache.flume.serialization.EventSerializer;
 import org.junit.After;
 import org.junit.Assert;
@@ -122,7 +121,7 @@ public class TestAvroEventSerializer {
 
         if (useStaticSchemaUrl) {
             ctx.put(
-                    AvroEventSerializerConfigurationConstants.STATIC_SCHEMA_URL,
+                    AvroEventSerializer.STATIC_SCHEMA_URL,
                     schemaFile.toURI().toURL().toExternalForm());
         }
 
