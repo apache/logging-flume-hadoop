@@ -17,6 +17,16 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+# Project status
+
+> [!WARNING]
+> **As of May 2026 this project is undergoing significant rework! We do not
+> advise using it until it is restablized and a formal release is announced.**
+> [It has been marked as dormant by Apache Logging Services consensus on 2024-10-10.](https://lists.apache.org/thread/dg9wro6dp7w95o1x911lbyqxzl808b3l)
+> Users are advised to migrate to alternatives.
+> For other inquiries, see [the support policy](https://logging.apache.org/support.html).
+
+
 # Welcome to Apache Flume Hadoop!
 
 Apache Flume is a distributed, reliable, and available service for efficiently
@@ -33,26 +43,19 @@ Apache Flume Hadoop is open-sourced under the Apache Software Foundation License
 
 ## Documentation
 
-Documentation is included in the binary distribution under the docs directory.
-In source form, it can be found in the flume-ng-doc directory.
+The Flume 2.x guide and FAQ are available here:
 
-The Flume 1.x guide and FAQ are available here:
+* https://flume.apache.org/
 
-* https://cwiki.apache.org/FLUME
-* https://cwiki.apache.org/confluence/display/FLUME/Getting+Started
+## Compiling Flume Hadoop
+
+Compiling Flume Hadoop requires Java 17 or later; the Maven wrapper (`./mvnw`) downloads the right Maven version.
 
 ## Contact us!
 
-* Mailing lists: https://cwiki.apache.org/confluence/display/FLUME/Mailing+Lists
+* Mailing lists: https://logging.apache.org/support.html
 * Slack channel #flume on https://the-asf.slack.com/
 
 Bug and Issue tracker.
 
-* https://github.com/apache/flume-Hadoop/issues
-
-## Compiling Flume Hadoop
-
-Compiling Flume Hadoop requires the following tools:
-
-* Oracle Java JDK 8 (Note: 3.x does not support compiling with anything but Java 8)
-* Apache Maven 3.x
+* https://github.com/apache/logging-flume-hadoop/issues
