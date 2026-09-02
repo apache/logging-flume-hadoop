@@ -163,7 +163,7 @@
               <outputDirectory>${basedir}/target/derby/metastore_db</outputDirectory>
               <resources>
                 <resource>
-                  <directory>src/test/metastore_db</directory>
+                  <directory>metastore_db</directory>
                   <filtering>false</filtering>
                 </resource>
               </resources>
