@@ -1,0 +1,4 @@
+.rat-excludes
+**/src/test/resources/**
+**/src/test/metastore_db/**
+**/*.avsc
