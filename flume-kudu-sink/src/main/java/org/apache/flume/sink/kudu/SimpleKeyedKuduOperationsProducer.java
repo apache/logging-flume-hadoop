@@ -1,32 +1,27 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to you under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-
 package org.apache.flume.sink.kudu;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
-
 import org.apache.flume.Context;
 import org.apache.flume.Event;
 import org.apache.flume.FlumeException;
-
 import org.apache.kudu.client.Insert;
 import org.apache.kudu.client.KuduTable;
 import org.apache.kudu.client.Operation;
@@ -72,65 +67,60 @@ import org.apache.kudu.client.Upsert;
  * </table>
  */
 public class SimpleKeyedKuduOperationsProducer implements KuduOperationsProducer {
-  public static final String PAYLOAD_COLUMN_PROP = "payloadColumn";
-  public static final String PAYLOAD_COLUMN_DEFAULT = "payload";
-  public static final String KEY_COLUMN_PROP = "keyColumn";
-  public static final String KEY_COLUMN_DEFAULT = "key";
-  public static final String OPERATION_PROP = "operation";
-  public static final String OPERATION_DEFAULT = "upsert";
+    public static final String PAYLOAD_COLUMN_PROP = "payloadColumn";
+    public static final String PAYLOAD_COLUMN_DEFAULT = "payload";
+    public static final String KEY_COLUMN_PROP = "keyColumn";
+    public static final String KEY_COLUMN_DEFAULT = "key";
+    public static final String OPERATION_PROP = "operation";
+    public static final String OPERATION_DEFAULT = "upsert";
 
-  private KuduTable table;
-  private String payloadColumn;
-  private String keyColumn;
-  private String operation = "";
+    private KuduTable table;
+    private String payloadColumn;
+    private String keyColumn;
+    private String operation = "";
 
-  public SimpleKeyedKuduOperationsProducer(){
-  }
+    public SimpleKeyedKuduOperationsProducer() {}
 
-  @Override
-  public void configure(Context context) {
-    payloadColumn = context.getString(PAYLOAD_COLUMN_PROP, PAYLOAD_COLUMN_DEFAULT);
-    keyColumn = context.getString(KEY_COLUMN_PROP, KEY_COLUMN_DEFAULT);
-    operation = context.getString(OPERATION_PROP, OPERATION_DEFAULT);
-  }
-
-  @Override
-  public void initialize(KuduTable table) {
-    this.table = table;
-  }
-
-  @Override
-  public List<Operation> getOperations(Event event) throws FlumeException {
-    String key = event.getHeaders().get(keyColumn);
-    if (key == null) {
-      throw new FlumeException(
-          String.format("No value provided for key column %s", keyColumn));
+    @Override
+    public void configure(Context context) {
+        payloadColumn = context.getString(PAYLOAD_COLUMN_PROP, PAYLOAD_COLUMN_DEFAULT);
+        keyColumn = context.getString(KEY_COLUMN_PROP, KEY_COLUMN_DEFAULT);
+        operation = context.getString(OPERATION_PROP, OPERATION_DEFAULT);
     }
-    try {
-      Operation op;
-      switch (operation.toLowerCase(Locale.ENGLISH)) {
-        case "upsert":
-          op = table.newUpsert();
-          break;
-        case "insert":
-          op = table.newInsert();
-          break;
-        default:
-          throw new FlumeException(
-              String.format("Unexpected operation %s", operation));
-      }
-      PartialRow row = op.getRow();
-      row.addString(keyColumn, key);
-      row.addBinary(payloadColumn, event.getBody());
 
-      return Collections.singletonList(op);
-    } catch (Exception e) {
-      throw new FlumeException("Failed to create Kudu Operation object", e);
+    @Override
+    public void initialize(KuduTable table) {
+        this.table = table;
     }
-  }
 
-  @Override
-  public void close() {
-  }
+    @Override
+    public List<Operation> getOperations(Event event) throws FlumeException {
+        String key = event.getHeaders().get(keyColumn);
+        if (key == null) {
+            throw new FlumeException(String.format("No value provided for key column %s", keyColumn));
+        }
+        try {
+            Operation op;
+            switch (operation.toLowerCase(Locale.ENGLISH)) {
+                case "upsert":
+                    op = table.newUpsert();
+                    break;
+                case "insert":
+                    op = table.newInsert();
+                    break;
+                default:
+                    throw new FlumeException(String.format("Unexpected operation %s", operation));
+            }
+            PartialRow row = op.getRow();
+            row.addString(keyColumn, key);
+            row.addBinary(payloadColumn, event.getBody());
+
+            return Collections.singletonList(op);
+        } catch (Exception e) {
+            throw new FlumeException("Failed to create Kudu Operation object", e);
+        }
+    }
+
+    @Override
+    public void close() {}
 }
-
