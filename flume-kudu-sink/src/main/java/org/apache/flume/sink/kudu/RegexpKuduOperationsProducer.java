@@ -1,24 +1,23 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to you under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-
 package org.apache.flume.sink.kudu;
 
+import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.List;
@@ -26,15 +25,9 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
-
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
 import org.apache.flume.Context;
 import org.apache.flume.Event;
 import org.apache.flume.FlumeException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.apache.kudu.ColumnSchema;
 import org.apache.kudu.Schema;
 import org.apache.kudu.Type;
@@ -43,6 +36,8 @@ import org.apache.kudu.client.KuduTable;
 import org.apache.kudu.client.Operation;
 import org.apache.kudu.client.PartialRow;
 import org.apache.kudu.client.Upsert;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A regular expression operations producer that generates one or more Kudu
@@ -164,235 +159,246 @@ import org.apache.kudu.client.Upsert;
  * @see Pattern
  */
 public class RegexpKuduOperationsProducer implements KuduOperationsProducer {
-  private static final Logger logger = LoggerFactory.getLogger(RegexpKuduOperationsProducer.class);
-  private static final String INSERT = "insert";
-  private static final String UPSERT = "upsert";
-  private static final List<String> validOperations = Lists.newArrayList(UPSERT, INSERT);
+    private static final Logger logger = LoggerFactory.getLogger(RegexpKuduOperationsProducer.class);
+    private static final String INSERT = "insert";
+    private static final String UPSERT = "upsert";
+    private static final List<String> validOperations = Lists.newArrayList(UPSERT, INSERT);
 
-  public static final String PATTERN_PROP = "pattern";
-  public static final String ENCODING_PROP = "encoding";
-  public static final String DEFAULT_ENCODING = "utf-8";
-  public static final String OPERATION_PROP = "operation";
-  public static final String DEFAULT_OPERATION = UPSERT;
-  @Deprecated
-  public static final String SKIP_MISSING_COLUMN_PROP = "skipMissingColumn";
-  @Deprecated
-  public static final boolean DEFAULT_SKIP_MISSING_COLUMN = false;
-  @Deprecated
-  public static final String SKIP_BAD_COLUMN_VALUE_PROP = "skipBadColumnValue";
-  @Deprecated
-  public static final boolean DEFAULT_SKIP_BAD_COLUMN_VALUE = false;
-  @Deprecated
-  public static final String WARN_UNMATCHED_ROWS_PROP = "skipUnmatchedRows";
-  @Deprecated
-  public static final boolean DEFAULT_WARN_UNMATCHED_ROWS = true;
-  public static final String MISSING_COLUMN_POLICY_PROP = "missingColumnPolicy";
-  public static final ParseErrorPolicy DEFAULT_MISSING_COLUMN_POLICY = ParseErrorPolicy.REJECT;
-  public static final String BAD_COLUMN_VALUE_POLICY_PROP = "badColumnValuePolicy";
-  public static final ParseErrorPolicy DEFAULT_BAD_COLUMN_VALUE_POLICY = ParseErrorPolicy.REJECT;
-  public static final String UNMATCHED_ROW_POLICY_PROP = "unmatchedRowPolicy";
-  public static final ParseErrorPolicy DEFAULT_UNMATCHED_ROW_POLICY = ParseErrorPolicy.WARN;
+    public static final String PATTERN_PROP = "pattern";
+    public static final String ENCODING_PROP = "encoding";
+    public static final String DEFAULT_ENCODING = "utf-8";
+    public static final String OPERATION_PROP = "operation";
+    public static final String DEFAULT_OPERATION = UPSERT;
 
-  private KuduTable table;
-  private Pattern pattern;
-  private Charset charset;
-  private String operation;
-  private ParseErrorPolicy missingColumnPolicy;
-  private ParseErrorPolicy badColumnValuePolicy;
-  private ParseErrorPolicy unmatchedRowPolicy;
+    @Deprecated
+    public static final String SKIP_MISSING_COLUMN_PROP = "skipMissingColumn";
 
-  public RegexpKuduOperationsProducer() {
-  }
+    @Deprecated
+    public static final boolean DEFAULT_SKIP_MISSING_COLUMN = false;
 
-  @Override
-  public void configure(Context context) {
-    String regexp = context.getString(PATTERN_PROP);
-    Preconditions.checkArgument(regexp != null,
-        "Required parameter %s is not specified",
-        PATTERN_PROP);
-    try {
-      pattern = Pattern.compile(regexp);
-    } catch (PatternSyntaxException e) {
-      throw new IllegalArgumentException(
-          String.format("The pattern '%s' is invalid", regexp), e);
-    }
-    String charsetName = context.getString(ENCODING_PROP, DEFAULT_ENCODING);
-    try {
-      charset = Charset.forName(charsetName);
-    } catch (IllegalArgumentException e) {
-      throw new FlumeException(
-          String.format("Invalid or unsupported charset %s", charsetName), e);
-    }
-    operation = context.getString(OPERATION_PROP, DEFAULT_OPERATION).toLowerCase(Locale.ENGLISH);
-    Preconditions.checkArgument(
-        validOperations.contains(operation),
-        "Unrecognized operation '%s'",
-        operation);
+    @Deprecated
+    public static final String SKIP_BAD_COLUMN_VALUE_PROP = "skipBadColumnValue";
 
+    @Deprecated
+    public static final boolean DEFAULT_SKIP_BAD_COLUMN_VALUE = false;
 
-    missingColumnPolicy = getParseErrorPolicyCheckingDeprecatedProperty(
-      context, SKIP_MISSING_COLUMN_PROP, MISSING_COLUMN_POLICY_PROP,
-      ParseErrorPolicy.WARN, ParseErrorPolicy.REJECT, DEFAULT_MISSING_COLUMN_POLICY
-    );
+    @Deprecated
+    public static final String WARN_UNMATCHED_ROWS_PROP = "skipUnmatchedRows";
 
-    badColumnValuePolicy = getParseErrorPolicyCheckingDeprecatedProperty(
-      context, SKIP_BAD_COLUMN_VALUE_PROP, BAD_COLUMN_VALUE_POLICY_PROP,
-      ParseErrorPolicy.WARN, ParseErrorPolicy.REJECT, DEFAULT_BAD_COLUMN_VALUE_POLICY
-    );
+    @Deprecated
+    public static final boolean DEFAULT_WARN_UNMATCHED_ROWS = true;
 
-    unmatchedRowPolicy = getParseErrorPolicyCheckingDeprecatedProperty(
-      context, WARN_UNMATCHED_ROWS_PROP, UNMATCHED_ROW_POLICY_PROP,
-      ParseErrorPolicy.WARN, ParseErrorPolicy.IGNORE, DEFAULT_UNMATCHED_ROW_POLICY
-    );
-  }
+    public static final String MISSING_COLUMN_POLICY_PROP = "missingColumnPolicy";
+    public static final ParseErrorPolicy DEFAULT_MISSING_COLUMN_POLICY = ParseErrorPolicy.REJECT;
+    public static final String BAD_COLUMN_VALUE_POLICY_PROP = "badColumnValuePolicy";
+    public static final ParseErrorPolicy DEFAULT_BAD_COLUMN_VALUE_POLICY = ParseErrorPolicy.REJECT;
+    public static final String UNMATCHED_ROW_POLICY_PROP = "unmatchedRowPolicy";
+    public static final ParseErrorPolicy DEFAULT_UNMATCHED_ROW_POLICY = ParseErrorPolicy.WARN;
 
-  @Override
-  public void initialize(KuduTable table) {
-    this.table = table;
-  }
+    private KuduTable table;
+    private Pattern pattern;
+    private Charset charset;
+    private String operation;
+    private ParseErrorPolicy missingColumnPolicy;
+    private ParseErrorPolicy badColumnValuePolicy;
+    private ParseErrorPolicy unmatchedRowPolicy;
 
-  @Override
-  public List<Operation> getOperations(Event event) throws FlumeException {
-    String raw = new String(event.getBody(), charset);
-    Matcher m = pattern.matcher(raw);
-    boolean match = false;
-    Schema schema = table.getSchema();
-    List<Operation> ops = Lists.newArrayList();
-    while (m.find()) {
-      match = true;
-      Operation op;
-      switch (operation) {
-        case UPSERT:
-          op = table.newUpsert();
-          break;
-        case INSERT:
-          op = table.newInsert();
-          break;
-        default:
-          throw new FlumeException(
-              String.format("Unrecognized operation type '%s' in getOperations(): " +
-                  "this should never happen!", operation));
-      }
-      PartialRow row = op.getRow();
-      for (ColumnSchema col : schema.getColumns()) {
+    public RegexpKuduOperationsProducer() {}
+
+    @Override
+    public void configure(Context context) {
+        String regexp = context.getString(PATTERN_PROP);
+        Preconditions.checkArgument(regexp != null, "Required parameter %s is not specified", PATTERN_PROP);
         try {
-          coerceAndSet(m.group(col.getName()), col.getName(), col.getType(), row);
-        } catch (NumberFormatException e) {
-          String msg = String.format(
-              "Raw value '%s' couldn't be parsed to type %s for column '%s'",
-              raw, col.getType(), col.getName());
-          logOrThrow(badColumnValuePolicy, msg, e);
-        } catch (IllegalArgumentException e) {
-          String msg = String.format(
-              "Column '%s' has no matching group in '%s'",
-              col.getName(), raw);
-          logOrThrow(missingColumnPolicy, msg, e);
-        } catch (Exception e) {
-          throw new FlumeException("Failed to create Kudu operation", e);
+            pattern = Pattern.compile(regexp);
+        } catch (PatternSyntaxException e) {
+            throw new IllegalArgumentException(String.format("The pattern '%s' is invalid", regexp), e);
         }
-      }
-      ops.add(op);
-    }
-    if (!match) {
-      String msg = String.format("Failed to match the pattern '%s' in '%s'", pattern, raw);
-      logOrThrow(unmatchedRowPolicy, msg, null);
-    }
-    return ops;
-  }
+        String charsetName = context.getString(ENCODING_PROP, DEFAULT_ENCODING);
+        try {
+            charset = Charset.forName(charsetName);
+        } catch (IllegalArgumentException e) {
+            throw new FlumeException(String.format("Invalid or unsupported charset %s", charsetName), e);
+        }
+        operation = context.getString(OPERATION_PROP, DEFAULT_OPERATION).toLowerCase(Locale.ENGLISH);
+        Preconditions.checkArgument(validOperations.contains(operation), "Unrecognized operation '%s'", operation);
 
-  /**
-   * Coerces the string `rawVal` to the type `type` and sets the resulting
-   * value for column `colName` in `row`.
-   *
-   * @param rawVal the raw string column value
-   * @param colName the name of the column
-   * @param type the Kudu type to convert `rawVal` to
-   * @param row the row to set the value in
-   * @throws NumberFormatException if `rawVal` cannot be cast as `type`.
-   */
-  private void coerceAndSet(String rawVal, String colName, Type type, PartialRow row)
-      throws NumberFormatException {
-    switch (type) {
-      case BOOL:
-        row.addBoolean(colName, Boolean.parseBoolean(rawVal));
-        break;
-      case INT8:
-        row.addByte(colName, Byte.parseByte(rawVal));
-        break;
-      case INT16:
-        row.addShort(colName, Short.parseShort(rawVal));
-        break;
-      case INT32:
-        row.addInt(colName, Integer.parseInt(rawVal));
-        break;
-      case INT64: // Fall through
-      case UNIXTIME_MICROS:
-        row.addLong(colName, Long.parseLong(rawVal));
-        break;
-      case FLOAT:
-        row.addFloat(colName, Float.parseFloat(rawVal));
-        break;
-      case DOUBLE:
-        row.addDouble(colName, Double.parseDouble(rawVal));
-        break;
-      case BINARY:
-        row.addBinary(colName, rawVal.getBytes(charset));
-        break;
-      case STRING:
-        row.addString(colName, rawVal);
-        break;
-      default:
-        logger.warn("got unknown type {} for column '{}'-- ignoring this column",
-            type, colName);
-    }
-  }
+        missingColumnPolicy = getParseErrorPolicyCheckingDeprecatedProperty(
+                context,
+                SKIP_MISSING_COLUMN_PROP,
+                MISSING_COLUMN_POLICY_PROP,
+                ParseErrorPolicy.WARN,
+                ParseErrorPolicy.REJECT,
+                DEFAULT_MISSING_COLUMN_POLICY);
 
-  private void logOrThrow(ParseErrorPolicy policy, String msg, Exception e)
-      throws FlumeException {
-    switch (policy) {
-      case REJECT:
-        throw new FlumeException(msg, e);
-      case WARN:
-        logger.warn(msg, e);
-        break;
-      case IGNORE:
-        // Fall through
-      default:
-    }
-  }
+        badColumnValuePolicy = getParseErrorPolicyCheckingDeprecatedProperty(
+                context,
+                SKIP_BAD_COLUMN_VALUE_PROP,
+                BAD_COLUMN_VALUE_POLICY_PROP,
+                ParseErrorPolicy.WARN,
+                ParseErrorPolicy.REJECT,
+                DEFAULT_BAD_COLUMN_VALUE_POLICY);
 
-  @Override
-  public void close() {
-  }
-
-  private ParseErrorPolicy getParseErrorPolicyCheckingDeprecatedProperty(
-      Context context, String deprecatedPropertyName, String newPropertyName,
-      ParseErrorPolicy trueValue, ParseErrorPolicy falseValue, ParseErrorPolicy defaultValue) {
-    ParseErrorPolicy policy;
-    if (context.containsKey(deprecatedPropertyName)) {
-      logger.info("Configuration property {} is deprecated. Use {} instead.",
-          deprecatedPropertyName, newPropertyName);
-      Preconditions.checkArgument(!context.containsKey(newPropertyName),
-          "Both {} and {} specified. Use only one of them, preferably {}.",
-          deprecatedPropertyName, newPropertyName, newPropertyName);
-      policy = context.getBoolean(deprecatedPropertyName) ? trueValue : falseValue;
-    } else {
-      String policyString = context.getString(newPropertyName, defaultValue.name());
-      try {
-        policy = ParseErrorPolicy.valueOf(policyString.toUpperCase(Locale.ENGLISH));
-      } catch (IllegalArgumentException e) {
-        throw new IllegalArgumentException(
-          "Unknown policy '" + policyString + "'. Use one of the following: " +
-              Arrays.toString(ParseErrorPolicy.values()), e);
-      }
+        unmatchedRowPolicy = getParseErrorPolicyCheckingDeprecatedProperty(
+                context,
+                WARN_UNMATCHED_ROWS_PROP,
+                UNMATCHED_ROW_POLICY_PROP,
+                ParseErrorPolicy.WARN,
+                ParseErrorPolicy.IGNORE,
+                DEFAULT_UNMATCHED_ROW_POLICY);
     }
 
-    return policy;
-  }
+    @Override
+    public void initialize(KuduTable table) {
+        this.table = table;
+    }
 
-  private enum ParseErrorPolicy {
-    WARN,
-    IGNORE,
-    REJECT
-  }
+    @Override
+    public List<Operation> getOperations(Event event) throws FlumeException {
+        String raw = new String(event.getBody(), charset);
+        Matcher m = pattern.matcher(raw);
+        boolean match = false;
+        Schema schema = table.getSchema();
+        List<Operation> ops = Lists.newArrayList();
+        while (m.find()) {
+            match = true;
+            Operation op;
+            switch (operation) {
+                case UPSERT:
+                    op = table.newUpsert();
+                    break;
+                case INSERT:
+                    op = table.newInsert();
+                    break;
+                default:
+                    throw new FlumeException(String.format(
+                            "Unrecognized operation type '%s' in getOperations(): " + "this should never happen!",
+                            operation));
+            }
+            PartialRow row = op.getRow();
+            for (ColumnSchema col : schema.getColumns()) {
+                try {
+                    coerceAndSet(m.group(col.getName()), col.getName(), col.getType(), row);
+                } catch (NumberFormatException e) {
+                    String msg = String.format(
+                            "Raw value '%s' couldn't be parsed to type %s for column '%s'",
+                            raw, col.getType(), col.getName());
+                    logOrThrow(badColumnValuePolicy, msg, e);
+                } catch (IllegalArgumentException e) {
+                    String msg = String.format("Column '%s' has no matching group in '%s'", col.getName(), raw);
+                    logOrThrow(missingColumnPolicy, msg, e);
+                } catch (Exception e) {
+                    throw new FlumeException("Failed to create Kudu operation", e);
+                }
+            }
+            ops.add(op);
+        }
+        if (!match) {
+            String msg = String.format("Failed to match the pattern '%s' in '%s'", pattern, raw);
+            logOrThrow(unmatchedRowPolicy, msg, null);
+        }
+        return ops;
+    }
+
+    /**
+     * Coerces the string `rawVal` to the type `type` and sets the resulting
+     * value for column `colName` in `row`.
+     *
+     * @param rawVal the raw string column value
+     * @param colName the name of the column
+     * @param type the Kudu type to convert `rawVal` to
+     * @param row the row to set the value in
+     * @throws NumberFormatException if `rawVal` cannot be cast as `type`.
+     */
+    private void coerceAndSet(String rawVal, String colName, Type type, PartialRow row) throws NumberFormatException {
+        switch (type) {
+            case BOOL:
+                row.addBoolean(colName, Boolean.parseBoolean(rawVal));
+                break;
+            case INT8:
+                row.addByte(colName, Byte.parseByte(rawVal));
+                break;
+            case INT16:
+                row.addShort(colName, Short.parseShort(rawVal));
+                break;
+            case INT32:
+                row.addInt(colName, Integer.parseInt(rawVal));
+                break;
+            case INT64: // Fall through
+            case UNIXTIME_MICROS:
+                row.addLong(colName, Long.parseLong(rawVal));
+                break;
+            case FLOAT:
+                row.addFloat(colName, Float.parseFloat(rawVal));
+                break;
+            case DOUBLE:
+                row.addDouble(colName, Double.parseDouble(rawVal));
+                break;
+            case BINARY:
+                row.addBinary(colName, rawVal.getBytes(charset));
+                break;
+            case STRING:
+                row.addString(colName, rawVal);
+                break;
+            default:
+                logger.warn("got unknown type {} for column '{}'-- ignoring this column", type, colName);
+        }
+    }
+
+    private void logOrThrow(ParseErrorPolicy policy, String msg, Exception e) throws FlumeException {
+        switch (policy) {
+            case REJECT:
+                throw new FlumeException(msg, e);
+            case WARN:
+                logger.warn(msg, e);
+                break;
+            case IGNORE:
+            // Fall through
+            default:
+        }
+    }
+
+    @Override
+    public void close() {}
+
+    private ParseErrorPolicy getParseErrorPolicyCheckingDeprecatedProperty(
+            Context context,
+            String deprecatedPropertyName,
+            String newPropertyName,
+            ParseErrorPolicy trueValue,
+            ParseErrorPolicy falseValue,
+            ParseErrorPolicy defaultValue) {
+        ParseErrorPolicy policy;
+        if (context.containsKey(deprecatedPropertyName)) {
+            logger.info(
+                    "Configuration property {} is deprecated. Use {} instead.",
+                    deprecatedPropertyName,
+                    newPropertyName);
+            Preconditions.checkArgument(
+                    !context.containsKey(newPropertyName),
+                    "Both {} and {} specified. Use only one of them, preferably {}.",
+                    deprecatedPropertyName,
+                    newPropertyName,
+                    newPropertyName);
+            policy = context.getBoolean(deprecatedPropertyName) ? trueValue : falseValue;
+        } else {
+            String policyString = context.getString(newPropertyName, defaultValue.name());
+            try {
+                policy = ParseErrorPolicy.valueOf(policyString.toUpperCase(Locale.ENGLISH));
+            } catch (IllegalArgumentException e) {
+                throw new IllegalArgumentException(
+                        "Unknown policy '" + policyString + "'. Use one of the following: "
+                                + Arrays.toString(ParseErrorPolicy.values()),
+                        e);
+            }
+        }
+
+        return policy;
+    }
+
+    private enum ParseErrorPolicy {
+        WARN,
+        IGNORE,
+        REJECT
+    }
 }
