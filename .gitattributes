@@ -13,41 +13,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Maven
-target/
-.flattened-pom.xml
-/.mvn/extensions.xml
-/.mvn/wrapper/maven-wrapper.jar
-.surefire-*
-
-# Node.js (used by `frontend-maven-plugin` in `logging-parent`)
-node/
-node_modules/
-package-lock.json
-
-# IntelliJ IDEA
-.idea/
-*.iml
-*.iws
-
-# Eclipse
-.project
-.classpath
-.settings/
-.factorypath
-/.metadata/
-.cache-main
-.cache-tests
-
-# Visual Studio Code
-.vscode/
-
-# NetBeans
-nb-configuration.xml
-
-# Editor backup files
-*~
-*#
-
-# macOS
-.DS_Store
+# All text files with LF line endings
+* text=auto eol=lf
+# PS1 files are Windows specific
+*.ps1 eol=crlf
+# Maven Wrapper cmd script
+/mvnw.cmd eol=crlf
+# Maven Wrapper need LF line endings
+/.mvn/wrapper/maven-wrapper.properties eol=lf

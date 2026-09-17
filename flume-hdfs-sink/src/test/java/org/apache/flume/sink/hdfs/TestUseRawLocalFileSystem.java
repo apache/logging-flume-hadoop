@@ -23,6 +23,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.flume.Context;
 import org.apache.flume.Event;
 import org.apache.flume.event.EventBuilder;
+import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.SequenceFile.CompressionType;
 import org.apache.hadoop.io.compress.GzipCodec;
 import org.junit.After;
@@ -72,7 +73,9 @@ public class TestUseRawLocalFileSystem {
         HDFSCompressedDataStream stream = new HDFSCompressedDataStream();
         context.put("hdfs.useRawLocalFileSystem", "true");
         stream.configure(context);
-        stream.open(file, new GzipCodec(), CompressionType.RECORD);
+        GzipCodec codec = new GzipCodec();
+        codec.setConf(new Configuration());
+        stream.open(file, codec, CompressionType.RECORD);
         stream.append(event);
         stream.sync();
         Assert.assertTrue(testFile.length() > 0);

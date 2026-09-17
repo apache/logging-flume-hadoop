@@ -61,7 +61,7 @@ class BucketWriter {
     /**
      * This lock ensures that only one thread can open a file at a time.
      */
-    private static final Integer staticLock = new Integer(1);
+    private static final Object staticLock = new Object();
 
     private Method isClosedMethod = null;
 

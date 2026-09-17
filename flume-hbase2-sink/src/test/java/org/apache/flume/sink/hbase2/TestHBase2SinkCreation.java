@@ -34,7 +34,8 @@ public class TestHBase2SinkCreation {
     }
 
     private void verifySinkCreation(Class<?> typeClass) throws FlumeException {
-        Sink sink = sinkFactory.create("hbase2-sink", "hbase2");
+        // Flume 2.x resolves sinks outside the main repository by class name only
+        Sink sink = sinkFactory.create("hbase2-sink", typeClass.getName());
         Assert.assertNotNull(sink);
         Assert.assertTrue(typeClass.isInstance(sink));
     }

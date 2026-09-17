@@ -376,7 +376,7 @@ public class RegexpKuduOperationsProducer implements KuduOperationsProducer {
                     newPropertyName);
             Preconditions.checkArgument(
                     !context.containsKey(newPropertyName),
-                    "Both {} and {} specified. Use only one of them, preferably {}.",
+                    "Both %s and %s specified. Use only one of them, preferably %s.",
                     deprecatedPropertyName,
                     newPropertyName,
                     newPropertyName);

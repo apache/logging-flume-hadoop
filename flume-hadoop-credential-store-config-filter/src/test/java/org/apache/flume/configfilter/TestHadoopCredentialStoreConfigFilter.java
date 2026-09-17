@@ -22,6 +22,7 @@ import static org.apache.flume.configfilter.HadoopCredentialStoreConfigFilter.PA
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
+import static org.junit.Assume.assumeFalse;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,7 +31,6 @@ import java.util.HashMap;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.security.alias.CredentialShell;
 import org.apache.hadoop.util.ToolRunner;
-import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
@@ -53,17 +53,15 @@ public class TestHadoopCredentialStoreConfigFilter {
 
     @BeforeClass
     public static void setUpClass() throws Exception {
+        // Hadoop's keystore providers read and set file permissions through `winutils.exe` on Windows,
+        // which is not available on the CI runners.
+        assumeFalse(
+                "Hadoop's keystore providers need winutils on Windows",
+                System.getProperty("os.name").startsWith("Windows"));
         generateTempFileNames();
         fillCredStoreWithDefaultPassword();
         fillCredStoreWithPasswordFile();
         fillCredStoreWithEnvironmentVariablePassword();
-    }
-
-    @AfterClass
-    public static void tearDown() {
-        fileDefault.deleteOnExit();
-        fileEnvPassword.deleteOnExit();
-        fileFilePassword.deleteOnExit();
     }
 
     @Before
@@ -153,19 +151,27 @@ public class TestHadoopCredentialStoreConfigFilter {
     }
 
     private static void generateTempFileNames() throws IOException {
-        fileDefault = Files.createTempFile("test-default-pwd-", ".jceks").toFile();
-        boolean deleted = fileDefault.delete();
-        fileEnvPassword = Files.createTempFile("test-env-pwd-", ".jceks").toFile();
-        deleted &= fileEnvPassword.delete();
-        fileFilePassword = Files.createTempFile("test-file-pwd-", ".jceks").toFile();
-        deleted &= fileFilePassword.delete();
-        if (!deleted) {
-            fail("Could not delete temporary files");
-        }
+        fileDefault = createTempFileName("test-default-pwd-");
+        fileEnvPassword = createTempFileName("test-env-pwd-");
+        fileFilePassword = createTempFileName("test-file-pwd-");
 
-        providerPathDefault = "jceks://file/" + fileDefault.getAbsolutePath();
-        providerPathEnv = "jceks://file/" + fileEnvPassword.getAbsolutePath();
-        providerPathPwdFile = "jceks://file/" + fileFilePassword.getAbsolutePath();
+        // Build the provider path from a `file:` URI, so that Windows paths are encoded correctly.
+        providerPathDefault = "jceks://file" + fileDefault.toURI().getRawPath();
+        providerPathEnv = "jceks://file" + fileEnvPassword.toURI().getRawPath();
+        providerPathPwdFile = "jceks://file" + fileFilePassword.toURI().getRawPath();
+    }
+
+    /**
+     * Reserves a temporary file name for a keystore, which the credential provider creates itself.
+     */
+    private static File createTempFileName(String prefix) throws IOException {
+        File file = Files.createTempFile(prefix, ".jceks").toFile();
+        // Delete the keystore created by the credential provider at the end of the tests.
+        file.deleteOnExit();
+        if (!file.delete()) {
+            fail("Could not delete temporary file " + file);
+        }
+        return file;
     }
 
     private static void runCommand(String c, Configuration conf) throws Exception {

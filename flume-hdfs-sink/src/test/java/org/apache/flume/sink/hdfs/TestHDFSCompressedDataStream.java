@@ -89,7 +89,7 @@ public class TestHDFSCompressedDataStream {
     @Test
     public void testGzipDurabilityWithSerializer() throws Exception {
         Context context = new Context();
-        context.put("serializer", "AVRO_EVENT");
+        context.put("serializer", "org.apache.flume.rpc.avro.serialization.FlumeEventAvroEventSerializer$Builder");
 
         HDFSCompressedDataStream writer = new HDFSCompressedDataStream();
         writer.configure(context);
