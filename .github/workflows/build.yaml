@@ -41,14 +41,21 @@ jobs:
     with:
       java-version: 17
 
-  # TODO: remove once the `.asf.yaml` ruleset on `main` requires `build / build (ubuntu-latest)`.
-  # The ruleset currently in force requires a check named `build (ubuntu-latest)`, which the
-  # reusable workflow cannot produce, so this job carries that name until the fix is merged.
-  build-legacy-check:
-    name: build (ubuntu-latest)
-    runs-on: ubuntu-latest
+  # Collects the results of the `build` matrix into a single check.
+  # This is the only check that needs to be listed as required in `.asf.yaml`.
+  build-result:
+    needs: build
+    # Run even if `build` failed or was canceled, so that the check is always reported.
+    if: always()
+    runs-on: ubuntu-slim
     steps:
-      - run: echo OK
+      - name: Verify build result
+        env:
+          # `success` only if all the jobs of the matrix succeeded.
+          BUILD_RESULT: ${{ needs.build.result }}
+        run: |
+          echo "Build result: $BUILD_RESULT"
+          test "$BUILD_RESULT" = "success"
 
   deploy-snapshot:
     needs: build
