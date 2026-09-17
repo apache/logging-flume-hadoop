@@ -271,6 +271,20 @@
         <module>flume-kudu-sink</module>
       </modules>
     </profile>
+    <!-- Hadoop needs `winutils.exe` and `hadoop.dll` to access the local file system on Windows.
+         These binaries are not distributed by the Apache Hadoop project, so the tests are skipped on Windows.
+         See https://cwiki.apache.org/confluence/display/HADOOP2/WindowsProblems -->
+    <profile>
+      <id>windows</id>
+      <activation>
+        <os>
+          <family>windows</family>
+        </os>
+      </activation>
+      <properties>
+        <skipTests>true</skipTests>
+      </properties>
+    </profile>
     <!-- Temporary copy from org.apache:apache, until the parent POM is released -->
     <profile>
       <id>use-apache-snapshots</id>
